@@ -14,6 +14,7 @@ def cleaning_pipeline(data, list_drop, save_folder, save_filename):
     - processed_data (pandas.DataFrame): The preprocessed DataFrame
     """
     data.drop(columns=list_drop, inplace=True)
+    data['nome'].fillna('No name', inplace=True)
     data['reviews_por_mes'].fillna(0, inplace=True)
     data = data[~((data["price"] > 1000) | (data["minimo_noites"] > 365))]
     save_path = os.path.join(save_folder, f"{save_filename}.csv")
