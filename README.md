@@ -58,7 +58,21 @@ From the exploratory data analysis, these were the main points that stood out:
 
 ![Minimo_Noites_Price](images/minimo_noites.png)
 
-- `calculado_host_listing_count` and `disponibilidade_365` don't have an impact on price
+- `disponibilidade_365` didn't show an impact on price during all steps of the EDA, and was dropped.
 
-## Engineered Features
+## Engineered Features and Data Distribution
+From the knowledge gained during the EDA, the following feature was created:
+- `distance_to_city_center`: This feature was created using the Haversine formula to calculate the distance, in kilometers, from the latitude/longitude of the row to the approximate coordinates of New York City's center. With it, the correlation matrix was plotted using the **spearman** method to handle the outliers and non-linear relations, and the new feature showed a good correlation to `price`
 
+![Correlation_Matrix](images/correlation_matrix.png)
+
+Since the EDA showed that a lot of numerical features had very highly positive skewed distributions, log and cubic transformations were tested on each of these columns, with a plot of their original distribution and the new ones after these transformations were applied. Also, a boxplot of the transformed feature was made to verify if the number of outliers was reduced or even if they were gone.
+- `minimo_noites` had an original skewness of 11.63. The best transformation was the log one, reducing the skewness to 1.47, with a small decrease in the number of outliers
+- `numero_de_reviews` had an original skewness of 3.68. The best transformation was the log one, reducing the skewness to 0.36, with all outliers gone
+- `reviews_por_mes` had an original skewness of 3.3. The best transformation was the cubic one, reducing the skewness to 0.19, with a reduced number of outliers
+- `calculado_host_listings_count` had an original skewness of 7.92. The best transformation was the log one, reducing the skewness to 3.28, but with a lot of outliers
+- `distance_to_city_center` had an original skewness of 1.11. The best transformation was the cubic one, reducing the skewness to -0.12, with a small decrease in the number of outliers
+
+Since `latitude` and `longitude` were not transformed (already had skewness very close to 0), all data was scaled using the Robust Scaler, to better handle the outliers, after the columns were transformed.
+
+## Models
