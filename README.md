@@ -1,4 +1,4 @@
-# Rent Price per Night Prediction
+# [Rent Price per Night Prediction](https://rentpredapp.azurewebsites.net/)
 
 ![project header](images/header.png)
 
@@ -76,3 +76,109 @@ Since the EDA showed that a lot of numerical features had very highly positive s
 Since `latitude` and `longitude` were not transformed (already had skewness very close to 0), all data was scaled using the Robust Scaler, to better handle the outliers, after the columns were transformed.
 
 ## Models
+### Model Performance
+For the modeling phase, four models will be used: **Ridge**, **Lasso**, **Random Forest** and **Gradient Boosting**. These models were chosen because of the non-linear relationship between the majority of the numerical columns and the target `price`, so using Linear Regression wouldn't make any sense in this case. To train the models, a repo in DagsHub was used, along with MLflow to keep track of all information about the models.
+After the models were trained and tested, they were evaluated in terms of the metrics MAE and RMSE, to see the error of the models in the same unit as the prices, and R² to see how much of the variability of the data the model can explain, along with visualization of the residuals. Also, the top 5 most important features of each model were plotted in relation to the increase in MAE, to check if any transformation, or if the feature created, was successful or not.
+
+![Metrics](images/metrics.png)
+
+Looking only at the metrics, the Random Forest model was the best one, despite the poor performance of all models
+
+### Residual Analysis
+
+![Residuals](images/residuals.png)
+
+All models had a very similar residuals behavior. No model had autocorrelated residuals, indicating that the errors of the models are independent of each other, which can be considered a good thing, since this tends to show that the model has captured the pattern in the data, with only noise in the residuals.
+Despite no autocorrelation, no model was able to have residuals with a normal distribution, indicating that no model is capturing the full variability of the data. With a combination of non-normal residuals and low R² scores, is clear that no model was able to capture all non-linear relations between the data, and they are not ideal models, statistically speaking.
+
+### Model Explainability
+
+![Feature_Importance](images/feature_importance.png)
+
+The ensemble models have the coordinates features as the most important ones, with the categories of `room_type` closing the list. All models have the created feature `distance_to_city_center` in their top 5 most important features, this means that all models rely on the correct values of this feature to make predictions. When permutation is applied to this feature, the impact on **MAE** is very low, making this feature very important
+
+## Model Selection
+All models had pretty similar results, with the ensemble ones having a way lower error. No model was considered ideal by the residual analysis, since there were no normally distributed residuals, which, combined with low R² scores, shows that no model was able to handle all non-linear relations between the data, nor was it able to capture the full variability of the data.
+When looking at features importance, the engineered feature `distance_to_city_center` was the only one that appeared in the top 5 most important features of all models, rendering the feature engineering efforts a success
+Despite no model being considered ideal and the low R² scores, the best model in terms of metrics was the **Random Forest** one, with the lower **MAE** and **RSME**, and highest **R²**
+These are the model parameters:
+```json
+{
+    criterion: "absolute_error",
+    max_depth: 	20,
+    max_features: "sqrt",
+    n_estimators: 100,
+    random_state: 42
+}
+```
+
+## App Usage
+
+The easiest way to use the app is by accessing this link: <https://rentpredapp.azurewebsites.net/>
+However, since the deployment was made with the free plan from Azure, which only gives 60min of usage per day, the other way is through a Docker image or running with uvicorn. Here is a step by step guide on how to create and run this image and how to run the app locally through uvicorn:
+
+### Docker Image
+### Step 1: Build Docker Image
+
+The easiest way to build and run a docker image is with Docker Desktop. It can be downloaded [here](https://www.docker.com/products/docker-desktop/).
+Clone the repository and go to the folder with the Dockerfile. Then, run the following command to build the image:
+
+```shell
+docker build -t rent_pred:latest .
+```
+
+To check if the image was created successfully, run `docker images` in your CLI and you should see `rent_pred` listed.
+
+### Step 2: Run Docker Image
+
+In the same CLI, run the following command to run the image:
+
+```shell
+docker run -p 80:80 rent_pred:latest
+```
+
+You should see something like this:
+
+```shell
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:80 (Press CTRL+C to quit)
+```
+
+Open a web browser page and type `localhost` in the search bar. The app should load and be ready for use. Use the datasets in the folder `Datasets for app usage` to test the `Predict with Dataset` function, or create your dataset based on the original data. Or, explore the `Predict with Manual Data` function, to manually input a row of data for the model to predict.
+
+## Running locally trough uvicorn (this assumes that you have python installed)
+### Step 1: Copy artifacts folder to app folder
+
+Clone or download this repository, then go to the main folder where the folders **artifact** and **app** are.
+Copy the **artifacts** folder and past it inside the **app** folder.
+
+### Step 2: Install libraries
+
+Once you have copied and pasted all the necessary folders to the **app** folder, go back to the main folder of the project (where requirements.txt is).
+Open a command prompt in this folder and run this command:
+
+```shell
+pip install -r requirements.txt
+```
+
+### Step 3: Run the app
+
+On the same command prompt, run the following command to run the app:
+
+```shell
+uvicorn app.main:app --reload
+```
+
+You should see something like this:
+
+```shell
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [5112] using StatReload
+INFO:     Started server process [10296]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+
+Copy the adress that the app is running, in this case http://127.0.0.1:8000, and open it on a web browser. The app should load and be ready for use. Use the datasets in the folder `Datasets for app usage` to test the `Predict with Dataset` function, or create your dataset based on the original data. Or, explore the `Predict with Manual Data` function, to manually input a row of data for the model to predict.
