@@ -115,6 +115,7 @@ These are the model parameters:
 ## App Usage
 
 The easiest way to use the app is by accessing this link: <https://rentpredapp.azurewebsites.net/>
+
 A prediction of the following data would be **$221.92**:
 
 ```json
