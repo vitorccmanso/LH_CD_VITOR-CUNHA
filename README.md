@@ -115,6 +115,28 @@ These are the model parameters:
 ## App Usage
 
 The easiest way to use the app is by accessing this link: <https://rentpredapp.azurewebsites.net/>
+A prediction of the following data would be **$221.92**:
+
+```json
+{'id': 2595,
+ 'nome': 'Skylit Midtown Castle',
+ 'host_id': 2845,
+ 'host_name': 'Jennifer',
+ 'bairro_group': 'Manhattan',
+ 'bairro': 'Midtown',
+ 'latitude': 40.75362,
+ 'longitude': -73.98377,
+ 'room_type': 'Entire home/apt',
+ 'price': 225,
+ 'minimo_noites': 1,
+ 'numero_de_reviews': 45,
+ 'ultima_review': '2019-05-21',
+ 'reviews_por_mes': 0.38,
+ 'calculado_host_listings_count': 2,
+ 'disponibilidade_365': 355
+}
+```
+
 However, since the deployment was made with the free plan from Azure, which only gives 60min of usage per day, the other way is through a Docker image or running with uvicorn. Here is a step by step guide on how to create and run this image and how to run the app locally through uvicorn:
 
 ### Docker Image
