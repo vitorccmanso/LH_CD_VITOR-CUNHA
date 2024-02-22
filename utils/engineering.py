@@ -6,9 +6,20 @@ from math import radians, sin, cos, sqrt, asin
 from scipy.stats import skew, mode
 
 class Plots:
+    """
+    A class for plotting data distributions and correlations
+
+    Attributes:
+    - data (DataFrame): The dataset to be visualized
+
+    Methods:
+    - __init__: Initialize the Plots object with a DataFrame
+    - plot_transformed_distributions: Plot distributions of a numeric column and its transformed versions
+    - plot_corr: Plot a heatmap of the correlation matrix for numerical columns in the DataFrame
+    """
     def __init__(self, data):
         """
-        Initialize the Plots class with a DataFrame
+        Initialize the Plots object with a DataFrame
 
         Parameters:
         - data: DataFrame containing the data
