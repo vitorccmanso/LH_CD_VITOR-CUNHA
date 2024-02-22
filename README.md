@@ -93,7 +93,7 @@ Despite no autocorrelation, no model was able to have residuals with a normal di
 
 ### Model Explainability
 
-![Feature_Importance](images/feature_importance.pgn)
+![Feature_Importance](images/feature_importance.PNG)
 
 The ensemble models have the coordinates features as the most important ones, with the categories of `room_type` closing the list. All models have the created feature `distance_to_city_center` in their top 5 most important features, this means that all models rely on the correct values of this feature to make predictions. When permutation is applied to this feature, the impact on **MAE** is very low, making this feature very important
 
