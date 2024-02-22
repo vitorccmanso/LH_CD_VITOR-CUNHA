@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Price per Night Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+          background-color: #eff2f9;
+        }
+    </style>
+</head>
+
+<body class="container mt-5">
+
+    <h1 class="mb-4">Rent Price per Night Prediction</h1>
+    <form id="manualForm" action="/manual_predict" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="bairro_group" class="form-label">Neighborhood Group:</label>
+            <select class="form-control" name="bairro_group" placeholder="Select Bairro Group" required>
+                <option class="placeholder" selected disabled value="">Select Neighborhood Group</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="bairro" class="form-label">Neighborhood:</label>
+            <select class="form-control" name="bairro" placeholder="Select Bairro" required>
+                <option class="placeholder" selected disabled value="">Select Neighborhood</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="latitude" class="form-label">Latitude [degrees]:</label>
+            <input type="number" class="form-control" name="latitude" step="any" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="longitude" class="form-label">Longitude [degrees]:</label>
+            <input type="number" class="form-control" name="longitude" step="any" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="room_type" class="form-label">Room Type:</label>
+            <select class="form-control" name="room_type" placeholder="Select Room Type" required>
+                <option class="placeholder" selected disabled value="">Select Room Type</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="minimo_noites" class="form-label">Min Nights:</label>
+            <input type="number" class="form-control" name="minimo_noites" min="1" step="any" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="numero_de_reviews" class="form-label">Number of Reviews:</label>
+            <input type="number" class="form-control" name="numero_de_reviews" min="0" step="any" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="reviews_por_mes" class="form-label">Reviews per Month:</label>
+            <input type="number" class="form-control" name="reviews_por_mes" min="0" step="any" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="calculado_host_listings_count" class="form-label">Number of listings of host:</label>
+            <input type="number" class="form-control" name="calculado_host_listings_count" min="1" step="any" required>
+        </div>
+
+        <div class="mb-3 d-flex">
+            <button type="submit" class="btn btn-primary me-2">Predict with manual data</button>
+            <a href="/" class="btn btn-secondary ms-2">Back</a>
+        </div>
+    </form>
+
+    {% if predicted_class %}
+    <h2 class="mt-4">
+        Prediction: ${{ predicted_class }}
+    </h2>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var neighborhood = document.querySelector('select[name="bairro"]');
+            var neighborhood_values = ['Midtown', 'Harlem', 'Clinton Hill', 'East Harlem', 'Murray Hill',
+                                'Bedford-Stuyvesant', "Hell's Kitchen", 'Upper West Side',
+                                'Chinatown', 'South Slope', 'West Village', 'Williamsburg',
+                                'Fort Greene', 'Chelsea', 'Crown Heights', 'Park Slope',
+                                'Windsor Terrace', 'Inwood', 'East Village', 'Greenpoint',
+                                'Bushwick', 'Flatbush', 'Lower East Side',
+                                'Prospect-Lefferts Gardens', 'Long Island City', 'Kips Bay',
+                                'SoHo', 'Upper East Side', 'Prospect Heights',
+                                'Washington Heights', 'Woodside', 'Brooklyn Heights',
+                                'Carroll Gardens', 'Gowanus', 'Flatlands', 'Cobble Hill',
+                                'Flushing', 'Boerum Hill', 'Sunnyside', 'DUMBO', 'St. George',
+                                'Highbridge', 'Financial District', 'Ridgewood',
+                                'Morningside Heights', 'Jamaica', 'Middle Village', 'NoHo',
+                                'Ditmars Steinway', 'Flatiron District', 'Roosevelt Island',
+                                'Greenwich Village', 'Little Italy', 'East Flatbush',
+                                'Tompkinsville', 'Astoria', 'Kensington', 'Clason Point',
+                                'Eastchester', 'Kingsbridge', 'Two Bridges', 'Queens Village',
+                                'Rockaway Beach', 'Forest Hills', 'Nolita', 'Woodlawn',
+                                'University Heights', 'Gravesend', 'Gramercy', 'Allerton',
+                                'East New York', 'Theater District', 'Concourse Village',
+                                'Sheepshead Bay', 'Emerson Hill', 'Fort Hamilton', 'Bensonhurst',
+                                'Tribeca', 'Shore Acres', 'Sunset Park', 'Concourse', 'Elmhurst',
+                                'Brighton Beach', 'Jackson Heights', 'Cypress Hills', 'St. Albans',
+                                'Arrochar', 'Rego Park', 'Wakefield', 'Clifton', 'Bay Ridge',
+                                'Graniteville', 'Spuyten Duyvil', 'Stapleton', 'Briarwood',
+                                'Ozone Park', 'Columbia St', 'Vinegar Hill', 'Mott Haven',
+                                'Longwood', 'Canarsie', 'Battery Park City', 'Civic Center',
+                                'East Elmhurst', 'New Springville', 'Morris Heights', 'Arverne',
+                                'Cambria Heights', 'Tottenville', 'Mariners Harbor', 'Concord',
+                                'Borough Park', 'Bayside', 'Downtown Brooklyn', 'Port Morris',
+                                'Fieldston', 'Kew Gardens', 'Midwood', 'College Point',
+                                'Mount Eden', 'City Island', 'Glendale', 'Port Richmond',
+                                'Red Hook', 'Richmond Hill', 'Bellerose', 'Maspeth',
+                                'Williamsbridge', 'Soundview', 'Woodhaven', 'Woodrow',
+                                'Co-op City', 'Stuyvesant Town', 'Parkchester', 'North Riverdale',
+                                'Dyker Heights', 'Bronxdale', 'Riverdale', 'Kew Gardens Hills',
+                                'Bay Terrace', 'Norwood', 'Claremont Village', 'Whitestone',
+                                'Fordham', 'Bayswater', 'Navy Yard', 'Brownsville', 'Eltingville',
+                                'Fresh Meadows', 'Mount Hope', 'Lighthouse Hill',
+                                'Springfield Gardens', 'Howard Beach', 'Belle Harbor',
+                                'Jamaica Estates', 'Van Nest', 'Morris Park', 'West Brighton',
+                                'Far Rockaway', 'South Ozone Park', 'Tremont', 'Corona',
+                                'Great Kills', 'Manhattan Beach', 'Marble Hill', 'Dongan Hills',
+                                'Castleton Corners', 'East Morrisania', 'Hunts Point', 'Neponsit',
+                                'Pelham Bay', 'Randall Manor', 'Throgs Neck', 'Todt Hill',
+                                'West Farms', 'Silver Lake', 'Morrisania', 'Laurelton',
+                                'Grymes Hill', 'Holliswood', 'Pelham Gardens', 'Belmont',
+                                'Rosedale', 'Edgemere', 'New Brighton', 'Midland Beach',
+                                'Baychester', 'Melrose', 'Sea Gate', 'Bergen Beach',
+                                'Richmondtown', 'Howland Hook', 'Schuylerville', 'Coney Island',
+                                'New Dorp Beach', "Prince's Bay", 'South Beach', 'Bath Beach',
+                                'Jamaica Hills', 'Oakwood', 'Castle Hill', 'Hollis', 'Douglaston',
+                                'Huguenot', 'Olinville', 'Edenwald', 'Grant City', 'Westerleigh',
+                                'Bay Terrace, Staten Island', 'Westchester Square', 'Little Neck',
+                                'Fort Wadsworth', 'Rosebank', 'Unionport', 'Mill Basin',
+                                'Arden Heights', "Bull's Head", 'New Dorp', 'Rossville',
+                                'Breezy Point', 'Willowbrook'];
+            neighborhood_values.forEach(function (type) {
+                var option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                neighborhood.appendChild(option);
+            });
+
+            var neighborhood_group = document.querySelector('select[name="bairro_group"]');
+            var neighborhood_group_values = ['Manhattan', 'Brooklyn', 'Queens', 'Staten Island', 'Bronx'];
+
+            neighborhood_group_values.forEach(function (option) {
+                var optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                neighborhood_group.appendChild(optionElement);
+            });
+
+            var room_type = document.querySelector('select[name="room_type"]');
+            var room_type_values = ['Entire home/apt', 'Private room', 'Shared room'];
+
+            room_type_values.forEach(function (option) {
+                var optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                room_type.appendChild(optionElement);
+            });
+        });
+    </script>
+</body>
+</html>
