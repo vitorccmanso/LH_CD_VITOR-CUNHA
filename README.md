@@ -80,20 +80,20 @@ Since `latitude` and `longitude` were not transformed (already had skewness very
 For the modeling phase, four models will be used: **Ridge**, **Lasso**, **Random Forest** and **Gradient Boosting**. These models were chosen because of the non-linear relationship between the majority of the numerical columns and the target `price`, so using Linear Regression wouldn't make any sense in this case. To train the models, a repo in DagsHub was used, along with MLflow to keep track of all information about the models.
 After the models were trained and tested, they were evaluated in terms of the metrics MAE and RMSE, to see the error of the models in the same unit as the prices, and R² to see how much of the variability of the data the model can explain, along with visualization of the residuals. Also, the top 5 most important features of each model were plotted in relation to the increase in MAE, to check if any transformation, or if the feature created, was successful or not.
 
-![Metrics](images/metrics.png)
+![Metrics](images/metrics.PNG)
 
 Looking only at the metrics, the Random Forest model was the best one, despite the poor performance of all models
 
 ### Residual Analysis
 
-![Residuals](images/residuals.png)
+![Residuals](images/residuals.PNG)
 
 All models had a very similar residuals behavior. No model had autocorrelated residuals, indicating that the errors of the models are independent of each other, which can be considered a good thing, since this tends to show that the model has captured the pattern in the data, with only noise in the residuals.
 Despite no autocorrelation, no model was able to have residuals with a normal distribution, indicating that no model is capturing the full variability of the data. With a combination of non-normal residuals and low R² scores, is clear that no model was able to capture all non-linear relations between the data, and they are not ideal models, statistically speaking.
 
 ### Model Explainability
 
-![Feature_Importance](images/feature_importance.png)
+![Feature_Importance](images/feature_importance.pgn)
 
 The ensemble models have the coordinates features as the most important ones, with the categories of `room_type` closing the list. All models have the created feature `distance_to_city_center` in their top 5 most important features, this means that all models rely on the correct values of this feature to make predictions. When permutation is applied to this feature, the impact on **MAE** is very low, making this feature very important
 
