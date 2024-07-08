@@ -167,7 +167,7 @@ class ModelTraining:
         Returns:
         - dict: A dictionary containing the evaluation report for each model
         """
-        mlflow.set_tracking_uri("https://dagshub.com/vitorccmanso/LH_CD_VITOR-CUNHA.mlflow")
+        mlflow.set_tracking_uri("https://dagshub.com/vitorccmanso/Rent-Price-Prediction.mlflow")
         X_train, y_train, X_test, y_test = train_test
         
         models = {
